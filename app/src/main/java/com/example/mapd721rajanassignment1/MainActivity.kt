@@ -17,6 +17,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -51,6 +53,7 @@ class MainActivity : ComponentActivity() {
             var id by remember { mutableStateOf("") }
             var username by remember { mutableStateOf("") }
             var courseName by remember { mutableStateOf("") }
+            var storedData by remember { mutableStateOf("") } // This updates only on "Load" click
             val scope = rememberCoroutineScope()
 
             Surface(
@@ -84,6 +87,10 @@ class MainActivity : ComponentActivity() {
                         onSave = {
                             scope.launch {
                                 dataStoreManager.saveData(id, username, courseName)
+                                id = "" // Clear input fields after storing
+                                username = ""
+                                courseName = ""
+                                storedData = "" // Do not display stored data immediately
                             }
                         },
                         onLoad = {
@@ -92,6 +99,7 @@ class MainActivity : ComponentActivity() {
                                 id = data.id
                                 username = data.username
                                 courseName = data.courseName
+                                storedData = "Student Info:\nID: ${data.id}\nUsername: ${data.username}\nCourse: ${data.courseName}"
                             }
                         },
                         onReset = {
@@ -100,9 +108,29 @@ class MainActivity : ComponentActivity() {
                                 id = ""
                                 username = ""
                                 courseName = ""
+                                storedData = "" // Clear storedData on reset
                             }
                         }
                     )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // Display Loaded Data ONLY when "Load" is clicked
+                    if (storedData.isNotEmpty()) {
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(12.dp),
+                            colors = CardDefaults.cardColors(containerColor = Color.White)
+                        ) {
+                            Text(
+                                text = storedData,
+                                modifier = Modifier.padding(16.dp),
+                                color = Color.Black,
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Medium
+                            )
+                        }
+                    }
 
                     Spacer(modifier = Modifier.weight(1f)) // Push name & ID to bottom
 
