@@ -50,10 +50,10 @@ class MainActivity : ComponentActivity() {
             val studentName = "Rajan Boudel"
             val studentID = "301365245"
 
-            var id by remember { mutableStateOf("") }
+            var id by remember { mutableStateOf("245") } // Default to "245"
             var username by remember { mutableStateOf("") }
             var courseName by remember { mutableStateOf("") }
-            var storedData by remember { mutableStateOf("") } // This updates only on "Load" click
+            var storedData by remember { mutableStateOf("") } // Updates only on "Load"
             val scope = rememberCoroutineScope()
 
             Surface(
@@ -87,7 +87,7 @@ class MainActivity : ComponentActivity() {
                         onSave = {
                             scope.launch {
                                 dataStoreManager.saveData(id, username, courseName)
-                                id = "" // Clear input fields after storing
+                                id = "245" // Reset to "245" instead of empty
                                 username = ""
                                 courseName = ""
                                 storedData = "" // Do not display stored data immediately
@@ -99,13 +99,13 @@ class MainActivity : ComponentActivity() {
                                 id = data.id
                                 username = data.username
                                 courseName = data.courseName
-                                storedData = "Student Info:\nID: ${data.id}\nUsername: ${data.username}\nCourse: ${data.courseName}"
+                                storedData = "Loaded Data:\nID: ${data.id}\nUsername: ${data.username}\nCourse: ${data.courseName}"
                             }
                         },
                         onReset = {
                             scope.launch {
                                 dataStoreManager.clearData()
-                                id = ""
+                                id = "245" // Reset to "245" on reset
                                 username = ""
                                 courseName = ""
                                 storedData = "" // Clear storedData on reset
